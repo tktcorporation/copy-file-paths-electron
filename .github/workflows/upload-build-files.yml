@@ -128,9 +128,6 @@ jobs:
             done
           fi
 
-      - name: Upload sourcemaps
-        run: nr sentry:sourcemaps
-
   publish-release:
     needs: [vars, draft-release, electron-build]
     runs-on: ubuntu-latest
