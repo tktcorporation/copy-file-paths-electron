@@ -23,8 +23,6 @@ import {
 import type React from 'react';
 import { memo, useState } from 'react';
 import { useI18n } from '../../i18n/store';
-import SearchBar from '../SearchBar';
-// import DarkModeToggle from '../settings/DarkModeToggle'; // ★ コメントアウト
 
 interface HeaderProps {
   searchQuery: string;
@@ -214,8 +212,6 @@ const Header = memo(
             </SelectContent>
           </Select>
           <Separator orientation="vertical" className="h-6" />
-          {/* <DarkModeToggle /> */}
-          {/* ★ コメントアウト */}
         </div>
       </header>
     );
