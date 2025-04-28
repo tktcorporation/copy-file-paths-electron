@@ -1,8 +1,8 @@
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { copyFiles } from 'clip-filepaths';
 import { app, clipboard, dialog, nativeImage, shell } from 'electron';
-import { copyFiles } from 'electron-pan-clip';
 import * as neverthrow from 'neverthrow';
 import sharp from 'sharp';
 
