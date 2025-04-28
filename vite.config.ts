@@ -40,14 +40,7 @@ export default ({ command }: ConfigEnv): UserConfig => {
   return {
     root: srcRoot,
     base: './',
-    plugins: [
-      react(),
-      sentryVitePlugin({
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-        org: process.env.SENTRY_ORG,
-        project: process.env.SENTRY_PROJECT,
-      }),
-    ],
+    plugins: [react()],
     resolve: {
       alias: {
         '@': srcRoot,
