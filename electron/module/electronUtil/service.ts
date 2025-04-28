@@ -252,6 +252,54 @@ const copyMultipleFilesToClipboard = async (
   }
 };
 
+// ディレクトリ内のファイル一覧取得用エラー型
+export type ListFilesInDirectoryError =
+  | { code: 'DIRECTORY_NOT_FOUND'; message: string }
+  | { code: 'NOT_A_DIRECTORY'; message: string }
+  | { code: 'UNKNOWN_ERROR'; message: string };
+
+/**
+ * ディレクトリ内のファイル一覧を取得する
+ * @param directory ディレクトリパス
+ * @returns ファイル名配列 or エラー
+ */
+export const listFilesInDirectory = async (
+  directory: string,
+): Promise<neverthrow.Result<string[], ListFilesInDirectoryError>> => {
+  try {
+    const stat = await fs.stat(directory);
+    if (!stat.isDirectory()) {
+      return neverthrow.err({
+        code: 'NOT_A_DIRECTORY',
+        message: '指定されたパスはディレクトリではありません',
+      });
+    }
+    const files = await fs.readdir(directory);
+    return neverthrow.ok(files);
+  } catch (error) {
+    if (isErrnoException(error) && error.code === 'ENOENT') {
+      return neverthrow.err({
+        code: 'DIRECTORY_NOT_FOUND',
+        message: 'ディレクトリが見つかりません',
+      });
+    }
+    return neverthrow.err({
+      code: 'UNKNOWN_ERROR',
+      message: error instanceof Error ? error.message : '不明なエラー',
+    });
+  }
+};
+
+// NodeJS.ErrnoException型ガード
+function isErrnoException(error: unknown): error is NodeJS.ErrnoException {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    typeof (error as { code?: unknown }).code === 'string'
+  );
+}
+
 export {
   openPathInExplorer,
   openGetDirDialog,

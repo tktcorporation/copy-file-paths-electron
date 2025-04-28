@@ -165,4 +165,20 @@ export const electronUtilRouter = () =>
         }
         return true;
       }),
+    /**
+     * ディレクトリ内のファイル一覧を取得するAPI
+     * @param directory ディレクトリパス
+     * @returns ファイル名配列
+     */
+    listFilesInDirectory: procedure
+      .input(z.object({ directory: z.string() }))
+      .mutation(async (ctx) => {
+        const result = await utilsService.listFilesInDirectory(
+          ctx.input.directory,
+        );
+        if (result.isErr()) {
+          throw result.error;
+        }
+        return { files: result.value };
+      }),
   });
