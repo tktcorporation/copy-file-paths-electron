@@ -1,0 +1,42 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "enableNonRootDocker": "true",
+      "moby": "true"
+    },
+    "ghcr.io/devcontainers/features/aws-cli:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    },
+    "ghcr.io/devcontainers/features/desktop-lite:1": {
+      "webPort": "6080",
+      "vncPort": "5901"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["WakaTime.vscode-wakatime", "YoavBls.pretty-ts-errors"]
+    }
+  },
+  "forwardPorts": [6080],
+  "portsAttributes": {
+    "6080": {
+      "label": "desktop"
+    }
+  },
+  "runArgs": [
+    "--shm-size=2g",
+    "--memory=8g",
+    "--memory-swap=16g",
+    "--env-file",
+    ".devcontainer/devcontainer.env"
+  ],
+  "updateContentCommand": "sudo apt-get update && sudo apt-get install -y build-essential fzf",
+  "postCreateCommand": "npm i -g @antfu/ni",
+  "containerEnv": {
+    "VNC_RESOLUTION": "1920x1080x24"
+  }
+}
