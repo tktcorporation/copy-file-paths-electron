@@ -1,0 +1,20 @@
+name: 'PR Issue Link'
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  issue-links:
+    runs-on: ubuntu-22.04
+    # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token
+    permissions:
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: tkt-actions/add-issue-links@v1.9.1
+        with:
+          repo-token: '${{ secrets.GITHUB_TOKEN }}' # required
+          branch-prefix: '' # required
+          link-style: comment
+          # Automatically assign the pull request creator to the related issue
+          assign-pr-creator-to-issue: 'true'

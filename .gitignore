@@ -40,8 +40,6 @@ debug/sequelize.sqlite
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-# pnpm
-.pnpm-store
 
 # playwright
 /test-results/

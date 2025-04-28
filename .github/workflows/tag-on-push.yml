@@ -1,0 +1,77 @@
+name: Tag on Push to Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - run: npm i -g @antfu/ni
+
+      - name: install dependencies
+        run: nci
+
+      - name: lint
+        run: nr lint
+
+  create_tag:
+    needs: lint
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
+
+      - name: Get current version from package.json
+        id: get_version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          package_version=$(node -p "require('./package.json').version")
+          echo "package_version=$package_version" >> $GITHUB_OUTPUT
+          LATEST_RELEASE_TAG=$(gh release list --exclude-drafts --json tagName --limit 1 -t '{{range .}}{{.tagName}}{{end}}')
+          echo "latest_release_tag=$LATEST_RELEASE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Check if version differs from latest tag
+        id: check_version
+        run: |
+          if [ "v${{ steps.get_version.outputs.package_version }}" != "${{ steps.get_version.outputs.latest_release_tag }}" ]; then
+            echo "new_version=true" >> $GITHUB_OUTPUT
+          else
+            echo "new_version=false" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Create new version tag if version differs
+        if: steps.check_version.outputs.new_version == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag "v${{ steps.get_version.outputs.package_version }}"
+          git push origin "v${{ steps.get_version.outputs.package_version }}"
+
+      - name: Create Tag for Draft release
+        if: steps.check_version.outputs.new_version != 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          tag_string="build-$(date -u +%Y%m%d%H%M%S)-${GITHUB_SHA::8}"
+          git tag "$tag_string"
+          git push origin "$tag_string"
