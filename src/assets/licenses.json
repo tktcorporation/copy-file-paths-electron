@@ -1943,6 +1943,13 @@
     "path": "/workspaces/copy-file-paths-electron/node_modules/copy-anything",
     "licenseFile": "/workspaces/copy-file-paths-electron/node_modules/copy-anything/LICENSE"
   },
+  "copy-file-paths-electron@0.1.0": {
+    "licenses": "UNKNOWN",
+    "repository": "https://github.com/tktcorporation/add-world-name-to-vrc-photo",
+    "publisher": "tktcorporation",
+    "path": "/workspaces/copy-file-paths-electron",
+    "licenseFile": "/workspaces/copy-file-paths-electron/README.md"
+  },
   "cross-spawn@7.0.6": {
     "licenses": "MIT",
     "repository": "https://github.com/moxystudio/node-cross-spawn",
@@ -4921,13 +4928,6 @@
     "publisher": "Evan You",
     "path": "/workspaces/copy-file-paths-electron/node_modules/vite",
     "licenseFile": "/workspaces/copy-file-paths-electron/node_modules/vite/LICENSE.md"
-  },
-  "copy-file-paths-electron@0.11.1": {
-    "licenses": "UNKNOWN",
-    "repository": "https://github.com/tktcorporation/add-world-name-to-vrc-photo",
-    "publisher": "tktcorporation",
-    "path": "/workspaces/copy-file-paths-electron",
-    "licenseFile": "/workspaces/copy-file-paths-electron/README.md"
   },
   "webidl-conversions@3.0.1": {
     "licenses": "BSD-2-Clause",
