@@ -1,6 +1,6 @@
 {
   "name": "copy-file-paths-electron",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "main": "main/index.cjs",
   "author": {
     "name": "tktcorporation"
@@ -13,7 +13,7 @@
     "typescript"
   ],
   "repository": {
-    "url": "https://github.com/tktcorporation/add-world-name-to-vrc-photo"
+    "url": "https://github.com/tktcorporation/copy-file-paths-electron"
   },
   "productName": "copy-file-paths-electron",
   "type": "module",
