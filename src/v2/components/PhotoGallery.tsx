@@ -21,6 +21,16 @@ const PhotoGallery = memo(() => {
   const copyMultipleMutation =
     trpcReact.electronUtil.copyMultipleImageDataByPath.useMutation();
 
+  // クリップボードのテキスト取得API
+  const getClipboardFilePathsQuery =
+    trpcReact.electronUtil.getClipboardFilePaths.useQuery(undefined, {
+      enabled: false,
+    });
+  const [clipboardFilePaths, setClipboardFilePaths] = useState<{
+    filePaths: Array<string>;
+    text?: string | null;
+  } | null>(null);
+
   // ディレクトリ選択ハンドラ
   const handleSelectDirectory = useCallback(async () => {
     const result = await showOpenDialogMutation.mutateAsync({
@@ -63,6 +73,15 @@ const PhotoGallery = memo(() => {
       title: `${selectedFiles.size}件のパスをコピーしました`,
     });
   }, [selectedFiles, copyMultipleMutation, directory]);
+
+  // ペーストボタンハンドラ
+  const handlePasteClipboard = useCallback(async () => {
+    const result = await getClipboardFilePathsQuery.refetch();
+    setClipboardFilePaths(result.data ?? null);
+    toast({
+      title: 'クリップボードの内容を取得しました',
+    });
+  }, [getClipboardFilePathsQuery, toast]);
 
   return (
     <div className="flex flex-col h-full p-4 gap-4 bg-gradient-to-br from-gray-50 via-white to-gray-200 rounded-xl shadow-lg">
@@ -150,6 +169,59 @@ const PhotoGallery = memo(() => {
           選択したファイルのパスをコピー
         </span>
       </button>
+      {/* ペーストボタンとクリップボード内容表示 */}
+      <button
+        type="button"
+        className="px-5 py-2 bg-gradient-to-r from-purple-500 via-purple-400 to-purple-600 text-white rounded-lg shadow-md hover:from-purple-600 hover:to-purple-700 hover:shadow-lg transition-all duration-200 w-fit font-semibold"
+        onClick={handlePasteClipboard}
+      >
+        <span className="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-5 h-5"
+          >
+            <title>ペーストアイコン</title>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16.5 10.5V6.75A2.25 2.25 0 0014.25 4.5h-7.5A2.25 2.25 0 004.5 6.75v10.5A2.25 2.25 0 006.75 19.5h6.75"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M18.75 15.75v-3a.75.75 0 00-.75-.75h-6a.75.75 0 00-.75.75v3m7.5 0a2.25 2.25 0 01-2.25 2.25h-3a2.25 2.25 0 01-2.25-2.25m7.5 0v0a2.25 2.25 0 01-2.25 2.25h-3a2.25 2.25 0 01-2.25-2.25"
+            />
+          </svg>
+          クリップボードをペースト
+        </span>
+      </button>
+      {clipboardFilePaths !== null && (
+        <div className="mt-2 p-2 bg-white/80 rounded shadow-inner border border-gray-200 text-gray-800 max-w-full break-all">
+          <div className="font-bold text-sm text-purple-700 mb-1">
+            クリップボードの内容:
+          </div>
+          {/* ファイルパス */}
+          <div className="text-xs whitespace-pre-wrap">
+            {clipboardFilePaths.filePaths.length > 0 ? (
+              clipboardFilePaths.filePaths.map((filePath) => (
+                <div key={filePath}>{filePath}</div>
+              ))
+            ) : (
+              <span className="text-gray-400">(空です)</span>
+            )}
+          </div>
+          {/* テキスト */}
+          <div className="text-xs whitespace-pre-wrap">
+            {clipboardFilePaths.text || (
+              <span className="text-gray-400">(空です)</span>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 });

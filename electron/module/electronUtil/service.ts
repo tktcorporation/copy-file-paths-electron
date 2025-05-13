@@ -1,10 +1,14 @@
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
-import { copyFiles } from 'clip-filepaths';
+import {
+  readClipboardFilePaths,
+  writeClipboardFilePaths,
+} from 'clip-filepaths';
 import { app, clipboard, dialog, nativeImage, shell } from 'electron';
 import * as neverthrow from 'neverthrow';
 import sharp from 'sharp';
+import { log } from '../../lib/logger';
 
 const openPathInExplorer = async (
   path: string,
@@ -51,22 +55,6 @@ const openGetFileDialog = async (
 
 const openUrlInDefaultBrowser = (url: string) => {
   return shell.openExternal(url);
-};
-
-const openPhotoPathWithPhotoApp = async (
-  filePath: string,
-): Promise<neverthrow.Result<string, Error>> => {
-  try {
-    const errorMsg = await shell.openPath(filePath);
-    if (errorMsg) {
-      return neverthrow.err(new Error(`Failed to open path: ${errorMsg}`));
-    }
-    return neverthrow.ok('');
-  } catch (error) {
-    return neverthrow.err(
-      error instanceof Error ? error : new Error('Unknown error opening path'),
-    );
-  }
 };
 
 const openPathWithAssociatedApp = async (
@@ -240,7 +228,7 @@ const copyMultipleFilesToClipboard = async (
     if (filePaths.length === 0) {
       return neverthrow.ok(undefined);
     }
-    copyFiles(filePaths);
+    writeClipboardFilePaths(filePaths);
 
     return neverthrow.ok(undefined);
   } catch (error) {
@@ -252,6 +240,11 @@ const copyMultipleFilesToClipboard = async (
   }
 };
 
+const readFilePathsFromClipboard = async () => {
+  const filePaths = await readClipboardFilePaths();
+  log.info('readFilePathsFromClipboard', filePaths);
+  return filePaths;
+};
 // ディレクトリ内のファイル一覧取得用エラー型
 export type ListFilesInDirectoryError =
   | { code: 'DIRECTORY_NOT_FOUND'; message: string }
@@ -305,10 +298,10 @@ export {
   openGetDirDialog,
   openGetFileDialog,
   openUrlInDefaultBrowser,
-  openPhotoPathWithPhotoApp,
   openPathWithAssociatedApp,
   copyImageDataByPath,
   copyImageByBase64,
   downloadImageAsPng,
   copyMultipleFilesToClipboard,
+  readFilePathsFromClipboard,
 };

@@ -125,15 +125,6 @@ export const electronUtilRouter = () =>
         }
         return true;
       }),
-    openPhotoPathWithPhotoApp: procedure
-      .input(z.string())
-      .mutation(async (ctx) => {
-        const result = await utilsService.openPhotoPathWithPhotoApp(ctx.input);
-        if (result.isErr()) {
-          throw result.error;
-        }
-        return true;
-      }),
     openGetDirDialog: procedure.query(async () => {
       const result = await utilsService.openGetDirDialog();
       return result.match(
@@ -181,4 +172,7 @@ export const electronUtilRouter = () =>
         }
         return { files: result.value };
       }),
+    getClipboardFilePaths: procedure.query(async () => {
+      return await utilsService.readFilePathsFromClipboard();
+    }),
   });
