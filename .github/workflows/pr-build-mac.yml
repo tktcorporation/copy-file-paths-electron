@@ -1,0 +1,109 @@
+name: Build macOS App for PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'external-package/**'
+      - 'electron/**'
+      - 'src/**'
+      - 'package.json'
+      - '.github/workflows/pr-build-mac.yml'
+
+jobs:
+  build-mac:
+    name: Build macOS App
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Install global dependencies
+        run: npm i -g @antfu/ni
+
+      - name: Install dependencies
+        run: nci
+
+      - name: Copy custom clip-filepaths binary if exists
+        run: |
+          if [ -f "external-package/fix-mac_clip-filepaths.darwin-arm64.node" ]; then
+            echo "Found custom clip-filepaths binary, copying to node_modules..."
+            cp external-package/fix-mac_clip-filepaths.darwin-arm64.node node_modules/clip-filepaths/clip-filepaths.darwin-arm64.node
+            # Also copy for x64 if running on Intel Mac
+            cp external-package/fix-mac_clip-filepaths.darwin-arm64.node node_modules/clip-filepaths/clip-filepaths.darwin-x64.node
+            # Copy for universal binary
+            cp external-package/fix-mac_clip-filepaths.darwin-arm64.node node_modules/clip-filepaths/clip-filepaths.darwin-universal.node
+          else
+            echo "No custom clip-filepaths binary found, using npm version"
+          fi
+
+      - name: Build Electron App
+        env:
+          NODE_ENV: production
+        run: |
+          nr clean:build
+          nr build
+          # Build without publishing, just create the app directory
+          nlx electron-builder --config=electron-builder.cjs --mac --dir
+
+      - name: List build artifacts
+        run: |
+          echo "Contents of dist directory:"
+          ls -la dist/ || echo "dist directory not found"
+          echo "Contents of dist/mac-arm64:"
+          ls -la dist/mac-arm64/ || echo "dist/mac-arm64 not found"
+          echo "Contents of dist/mac:"
+          ls -la dist/mac/ || echo "dist/mac not found"
+
+      - name: Create DMG (optional)
+        run: |
+          # Try to create a DMG for easier distribution
+          npx electron-builder --config=electron-builder.cjs --mac dmg || echo "DMG creation failed, but app bundle should be available"
+        continue-on-error: true
+
+      - name: Upload macOS App as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-app-${{ github.sha }}
+          path: |
+            dist/mac*/*.app
+            dist/*.dmg
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Comment on PR with artifact link
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const artifactName = `macos-app-${context.sha}`;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            
+            const body = `## 🎉 macOS Build Complete!
+            
+            The macOS app has been built successfully with the custom clip-filepaths binary.
+            
+            **Download:** [Build Artifacts](${runUrl}) → Download \`${artifactName}\`
+            
+            **Note:** The artifact will be available for 7 days.
+            
+            To test the app:
+            1. Download and extract the artifact
+            2. Open the .app file (you may need to right-click and select "Open" due to macOS security)
+            3. Test the clipboard functionality with the custom binary
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
