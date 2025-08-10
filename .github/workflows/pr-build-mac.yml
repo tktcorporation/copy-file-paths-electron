@@ -10,6 +10,10 @@ on:
       - 'package.json'
       - '.github/workflows/pr-build-mac.yml'
 
+permissions:
+  contents: read
+  pull-requests: write  # PRへのコメント権限を追加
+
 jobs:
   build-mac:
     name: Build macOS App
@@ -80,7 +84,7 @@ jobs:
           retention-days: 7
 
       - name: Comment on PR with artifact link
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && success()
         uses: actions/github-script@v7
         with:
           script: |
@@ -101,9 +105,14 @@ jobs:
             3. Test the clipboard functionality with the custom binary
             `;
             
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: body
-            });
+            try {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            } catch (error) {
+              console.log('Could not create comment:', error.message);
+              console.log('You can still download the artifact from the Actions tab.');
+            }
