@@ -6476,7 +6476,7 @@ __metadata:
     opentype.js: "npm:1.3.4"
     p-queue: "npm:^8.1.0"
     pathe: "npm:1.1.2"
-    playwright: "npm:1.43.1"
+    playwright: "npm:1.55.1"
     pony-cause: "npm:2.1.11"
     postcss: "npm:8.4.38"
     react: "npm:18.2.0"
@@ -10803,6 +10803,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"playwright-core@npm:1.55.1":
+  version: 1.55.1
+  resolution: "playwright-core@npm:1.55.1"
+  bin:
+    playwright-core: cli.js
+  checksum: 10c0/39837a8c1232ec27486eac8c3fcacc0b090acc64310f7f9004b06715370fc426f944e3610fe8c29f17cd3d68280ed72c75f660c02aa5b5cf0eb34bab0031308f
+  languageName: node
+  linkType: hard
+
 "playwright@npm:1.43.1":
   version: 1.43.1
   resolution: "playwright@npm:1.43.1"
@@ -10815,6 +10824,21 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: 10c0/7edc1e12b8f3b791c7e8d1f9c595be35c6eaf8100f9550d5e35e979aca0bc229734e65f200f2a02dc7e21630cc40c171d7b25f5f6ccf628c79e4a2d4690909ab
+  languageName: node
+  linkType: hard
+
+"playwright@npm:1.55.1":
+  version: 1.55.1
+  resolution: "playwright@npm:1.55.1"
+  dependencies:
+    fsevents: "npm:2.3.2"
+    playwright-core: "npm:1.55.1"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    playwright: cli.js
+  checksum: 10c0/b84a97b0d764403df512f5bbb10c7343974e151a28202cc06f90883a13e8a45f4491a0597f0ae5fb03a026746cbc0d200f0f32195bfaa381aee5ca5770626771
   languageName: node
   linkType: hard
 
