@@ -87,7 +87,7 @@
     "@tktcorporation/hello-napi": "^1.0.4",
     "@trpc/client": "10.45.2",
     "@trpc/react-query": "10.45.2",
-    "@trpc/server": "10.45.2",
+    "@trpc/server": "10.45.3",
     "@vitejs/plugin-react": "4.2.1",
     "class-variance-authority": "0.7.0",
     "clip-filepaths": "0.2.0",
