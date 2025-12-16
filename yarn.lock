@@ -4547,10 +4547,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trpc/server@npm:10.45.2":
-  version: 10.45.2
-  resolution: "@trpc/server@npm:10.45.2"
-  checksum: 10c0/c6bff389f7c4e273101834d55c917c2fe271189ee17985b79e4a925920afc39d45da3f247611cd7f8aeca3a461739118c621679bd183e9ad8765676e85c95712
+"@trpc/server@npm:10.45.3":
+  version: 10.45.3
+  resolution: "@trpc/server@npm:10.45.3"
+  checksum: 10c0/b4f575f4beacf8fca78da6a148e4059548ab43d0b167289f92499c92faeb1e6cea5ac4d293bbd7394c42faabcfc2c3988ea3d72b5c748f03513b73636d859316
   languageName: node
   linkType: hard
 
@@ -6430,7 +6430,7 @@ __metadata:
     "@tktcorporation/hello-napi": "npm:^1.0.4"
     "@trpc/client": "npm:10.45.2"
     "@trpc/react-query": "npm:10.45.2"
-    "@trpc/server": "npm:10.45.2"
+    "@trpc/server": "npm:10.45.3"
     "@types/babel__core": "npm:7.20.5"
     "@types/electron-is-dev": "npm:1.1.1"
     "@types/jest": "npm:29.5.12"
